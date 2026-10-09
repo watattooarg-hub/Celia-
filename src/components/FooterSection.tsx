@@ -1,7 +1,8 @@
 import React from 'react';
 import { SALON_INFO } from '../data/services';
-import { MapPin, Instagram, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { MapPin, Instagram, ExternalLink, Sparkles } from 'lucide-react';
 import { StudioLogo } from './StudioLogo';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 export const FooterSection: React.FC = () => {
   return (
@@ -76,12 +77,12 @@ export const FooterSection: React.FC = () => {
             </a>
 
             <a
-              href={`https://wa.me/${SALON_INFO.whatsappRaw}`}
+              href="https://wa.me/5491165804616?text=Hola%20me%20gustaria%20pedir%20un%20Turno%20para%20..."
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#D6001C] hover:text-[#ff3b4e] font-bold transition-colors flex items-center gap-1.5"
+              className="text-[#25D366] hover:text-[#20ba59] font-bold transition-colors flex items-center gap-1.5"
             >
-              <MessageCircle className="w-3.5 h-3.5" />
+              <WhatsAppIcon className="w-3.5 h-3.5" />
               <span>WHATSAPP ELITE</span>
             </a>
 
@@ -103,13 +104,14 @@ export const FooterSection: React.FC = () => {
             <p>
               © {new Date().getFullYear()} CELIA FIGUEREDO ATELIER. TODOS LOS DERECHOS RESERVADOS.
             </p>
-            <p className="text-xs text-stone-400">
-              creada por <strong className="text-[#D4AF37] font-semibold">Soul Grafic Desing</strong>{' '}
+            <p className="text-xs" style={{ color: '#facc15' }}>
+              creada por <strong className="font-bold" style={{ color: '#facc15' }}>Soul Grafic Desing</strong>{' '}
               <a
                 href="https://wa.me/5491176423742?text=hola%20megustaria%20tener%20mi%20propio%20proyecto%20de.."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-stone-200 hover:text-[#D4AF37] underline underline-offset-2 transition-colors font-medium ml-1 cursor-pointer"
+                className="hover:opacity-80 transition-opacity ml-1 cursor-pointer font-medium"
+                style={{ color: '#facc15', textDecoration: 'none' }}
                 title="Hablar de tu proyecto con Soul Grafic Desing"
               >
                 click para hablar de tu proyecto.

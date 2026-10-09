@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SALON_INFO } from '../data/services';
+import { WhatsAppIcon } from './WhatsAppIcon';
 import {
-  MessageCircle,
   Menu,
   X,
   Calendar,
@@ -137,12 +137,12 @@ export const Navbar: React.FC = () => {
 
             {/* CTA 2: Watsapp directo (Verde) */}
             <a
-              href={`https://wa.me/${SALON_INFO.whatsappRaw}`}
+              href="https://wa.me/5491165804616?text=Hola%20me%20gustaria%20pedir%20un%20Turno%20para%20..."
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:flex py-2.5 px-3.5 bg-[#25D366] hover:bg-[#20ba59] text-black text-[11px] uppercase tracking-wider font-semibold transition-all duration-300 rounded-sm items-center gap-1.5 shadow-[0_0_12px_rgba(37,211,102,0.4)]"
+              className="hidden sm:flex py-2.5 px-3.5 bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] uppercase tracking-wider font-semibold transition-all duration-300 rounded-sm items-center gap-1.5 shadow-[0_0_12px_rgba(37,211,102,0.4)]"
             >
-              <MessageCircle className="w-3.5 h-3.5 fill-black text-black" />
+              <WhatsAppIcon className="w-4 h-4 text-white" />
               <span>Watsapp directo</span>
             </a>
 
@@ -286,13 +286,13 @@ export const Navbar: React.FC = () => {
 
                 {/* Botón 2: Watsapp directo (Verde) */}
                 <a
-                  href={`https://wa.me/${SALON_INFO.whatsappRaw}`}
+                  href="https://wa.me/5491165804616?text=Hola%20me%20gustaria%20pedir%20un%20Turno%20para%20..."
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
-                  className="py-3 px-2 bg-[#25D366] hover:bg-[#20ba59] text-black text-center rounded text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(37,211,102,0.4)] transition-all"
+                  className="py-3 px-2 bg-[#25D366] hover:bg-[#20ba59] text-white text-center rounded text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(37,211,102,0.4)] transition-all"
                 >
-                  <MessageCircle className="w-3.5 h-3.5 flex-shrink-0 fill-black text-black" />
+                  <WhatsAppIcon className="w-4 h-4 flex-shrink-0 text-white" />
                   <span className="truncate">Watsapp directo</span>
                 </a>
               </div>

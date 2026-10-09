@@ -13,7 +13,8 @@ import { FooterSection } from './components/FooterSection';
 import { MasterPanel } from './components/MasterPanel';
 import { Appointment } from './types';
 import { SALON_INFO } from './data/services';
-import { MessageCircle, ArrowUp } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
+import { WhatsAppIcon } from './components/WhatsAppIcon';
 
 function getInitialRoute(): 'turnos' | 'master' {
   if (typeof window === 'undefined') return 'turnos';
@@ -109,13 +110,14 @@ export default function App() {
       {/* Floating Action Buttons */}
       {/* Floating WhatsApp button */}
       <a
-        href={`https://wa.me/${SALON_INFO.whatsappRaw}`}
+        href="https://wa.me/5491165804616?text=Hola%20me%20gustaria%20pedir%20un%20Turno%20para%20..."
         target="_blank"
         rel="noopener noreferrer"
-        title="Contactar a Celia por WhatsApp"
-        className="fixed bottom-6 right-6 z-40 p-3.5 bg-[#25D366] hover:bg-[#20ba59] text-black rounded-full shadow-[0_4px_25px_rgba(37,211,102,0.4)] transition-all duration-300 hover:scale-110 flex items-center justify-center cursor-pointer group"
+        title="Pedir un Turno por WhatsApp"
+        aria-label="Pedir un Turno por WhatsApp"
+        className="fixed bottom-6 right-6 z-[99999] p-3.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full shadow-[0_4px_25px_rgba(37,211,102,0.5)] transition-all duration-300 hover:scale-110 flex items-center justify-center cursor-pointer group"
       >
-        <MessageCircle className="w-6 h-6 fill-black text-black group-hover:rotate-6 transition-transform" />
+        <WhatsAppIcon className="w-7 h-7 text-white drop-shadow-sm group-hover:rotate-6 transition-transform" />
       </a>
 
       {/* Back to top button */}

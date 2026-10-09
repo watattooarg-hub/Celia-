@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StudioLogo } from './StudioLogo';
 import { SALON_INFO, DaySchedule, DEFAULT_WEEKLY_SCHEDULE } from '../data/services';
 import { getStoredWeeklySchedule } from '../utils/appointmentStorage';
-import { MapPin, Calendar, Search, Sparkles, MessageCircle, Clock, ExternalLink } from 'lucide-react';
+import { MapPin, Calendar, Search, Sparkles, Clock, ExternalLink } from 'lucide-react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 export const HeroSection: React.FC = () => {
   const [schedule, setSchedule] = useState<DaySchedule[]>(() => {
@@ -71,12 +72,12 @@ export const HeroSection: React.FC = () => {
 
           {/* Botón 2: Watsapp directo (Verde) */}
           <a
-            href={`https://wa.me/${SALON_INFO.whatsappRaw}`}
+            href="https://wa.me/5491165804616?text=Hola%20me%20gustaria%20pedir%20un%20Turno%20para%20..."
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3.5 sm:py-4 px-3 sm:px-6 bg-[#25D366] hover:bg-[#20ba59] text-black text-center text-xs sm:text-sm uppercase tracking-wider sm:tracking-widest font-semibold transition-all duration-300 rounded-sm shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] hover:-translate-y-0.5 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
+            className="w-full py-3.5 sm:py-4 px-3 sm:px-6 bg-[#25D366] hover:bg-[#20ba59] text-white text-center text-xs sm:text-sm uppercase tracking-wider sm:tracking-widest font-semibold transition-all duration-300 rounded-sm shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] hover:-translate-y-0.5 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
           >
-            <MessageCircle className="w-4 h-4 flex-shrink-0 fill-black text-black" />
+            <WhatsAppIcon className="w-4 h-4 flex-shrink-0 text-white" />
             <span className="truncate">Watsapp directo</span>
           </a>
         </div>
