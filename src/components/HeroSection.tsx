@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StudioLogo } from './StudioLogo';
-import { SALON_INFO } from '../data/services';
-import { MapPin, Calendar, Search, Sparkles, MessageCircle } from 'lucide-react';
+import { SALON_INFO, DaySchedule, DEFAULT_WEEKLY_SCHEDULE } from '../data/services';
+import { getStoredWeeklySchedule } from '../utils/appointmentStorage';
+import { MapPin, Calendar, Search, Sparkles, MessageCircle, Clock, ExternalLink } from 'lucide-react';
 
 export const HeroSection: React.FC = () => {
+  const [schedule, setSchedule] = useState<DaySchedule[]>(() => {
+    return getStoredWeeklySchedule();
+  });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setSchedule(getStoredWeeklySchedule());
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
   return (
     <section id="estudio" className="relative min-h-screen pt-28 pb-20 flex flex-col items-center justify-center text-center px-4 md:px-8 overflow-hidden bg-radial from-[#181818] via-[#080808] to-[#030303]">
       {/* Decorative subtle ambient lights */}
@@ -80,45 +92,90 @@ export const HeroSection: React.FC = () => {
           </a>
         </div>
 
-        {/* Recuadro grande de Horarios de Atención solicitado */}
-        <div className="mt-7 w-full max-w-sm sm:max-w-md mx-auto bg-[#0a0a0a]/90 border border-[#D4AF37]/35 rounded-sm p-4 sm:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.7)] text-left">
-          <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-[#222]">
-            <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold">
-              Horarios de Atención
-            </span>
-            <span className="text-[10px] text-stone-400 tracking-wider">
-              Local 47
-            </span>
-          </div>
+        {/* Recuadro / Cartel Comercial de Horarios de Atención (Estilo Placa Vidriera con Ventosas / Suction Cups como en la imagen) */}
+        <div className="mt-8 w-full max-w-xl sm:max-w-2xl md:max-w-3xl mx-auto relative group">
+          {/* Main Acrylic Sign Plaque */}
+          <div className="relative bg-[#070707] border-2 border-stone-700/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.95)] text-left overflow-hidden">
+            {/* 4 Corner Suction Cups / Standoffs (Ventosas de fijación a vidrio idénticas a la foto) */}
+            <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-stone-200 via-stone-400 to-stone-600 border border-white/80 shadow-[0_2px_8px_rgba(0,0,0,0.9)] flex items-center justify-center pointer-events-none">
+              <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-stone-900 border border-stone-600/70" />
+            </div>
+            <div className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-stone-200 via-stone-400 to-stone-600 border border-white/80 shadow-[0_2px_8px_rgba(0,0,0,0.9)] flex items-center justify-center pointer-events-none">
+              <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-stone-900 border border-stone-600/70" />
+            </div>
+            <div className="absolute bottom-3.5 left-3.5 sm:bottom-4 sm:left-4 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-stone-200 via-stone-400 to-stone-600 border border-white/80 shadow-[0_2px_8px_rgba(0,0,0,0.9)] flex items-center justify-center pointer-events-none">
+              <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-stone-900 border border-stone-600/70" />
+            </div>
+            <div className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-stone-200 via-stone-400 to-stone-600 border border-white/80 shadow-[0_2px_8px_rgba(0,0,0,0.9)] flex items-center justify-center pointer-events-none">
+              <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-stone-900 border border-stone-600/70" />
+            </div>
 
-          <div className="space-y-1.5 text-xs sm:text-sm font-sans tracking-wide">
-            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
-              <span className="font-medium text-stone-300">Lun</span>
-              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
+            {/* Subtle glass reflection sheen */}
+            <div className="absolute -top-12 -left-12 w-96 h-32 bg-white/[0.03] rotate-12 blur-xl pointer-events-none" />
+
+            {/* Plaque Header: Large, bold, centered uppercase as shown in reference sign */}
+            <div className="text-center pb-4 sm:pb-5 mb-3 sm:mb-4 border-b-2 border-stone-700/80 relative z-10 px-4">
+              <div className="inline-flex items-center justify-center gap-2 mb-1.5">
+                <Clock className="w-5 h-5 text-white/90" />
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-[0.16em] sm:tracking-[0.2em] text-white font-sans">
+                  HORARIO DE ATENCIÓN
+                </h3>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm text-stone-300 font-sans tracking-wide">
+                <span className="font-semibold text-white/90">Galería Americana • Local 47</span>
+                <span className="text-stone-600 hidden sm:inline">•</span>
+                <a
+                  href={SALON_INFO.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[#D4AF37] hover:text-[#f1d592] hover:underline font-bold text-xs uppercase tracking-wider"
+                  title="Abrir y verificar ficha oficial en Google Maps"
+                >
+                  <span>Google Maps</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
-            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
-              <span className="font-medium text-stone-300">Mar</span>
-              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
+
+            {/* Days and Hours List: Wide layout, ultra-legible bold white typography as requested */}
+            <div className="divide-y divide-stone-800/90 relative z-10 font-sans">
+              {schedule.map((item) => {
+                const isClosed = item.isClosed || item.hoursText.toLowerCase().includes('cerrado');
+                return (
+                  <div
+                    key={item.dayKey}
+                    className="flex items-center justify-between py-2.5 sm:py-3.5 px-2 sm:px-4 transition-colors hover:bg-white/[0.02]"
+                  >
+                    {/* Day Column (Full name, Bold Sans-Serif White) */}
+                    <span className="font-black text-white text-base sm:text-lg md:text-xl uppercase tracking-wider">
+                      {item.dayFull}
+                    </span>
+
+                    {/* Hours Column (Bold Sans-Serif White or Red Cerrado) */}
+                    {isClosed ? (
+                      <span className="inline-flex items-center gap-1.5 font-black uppercase tracking-wider text-[#ff3344] text-base sm:text-lg md:text-xl">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#ff3344] inline-block animate-pulse" />
+                        CERRADO
+                      </span>
+                    ) : (
+                      <span className="font-black text-white text-base sm:text-lg md:text-xl uppercase tracking-wider">
+                        {item.hoursText.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
-              <span className="font-medium text-stone-300">Mie</span>
-              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
-            </div>
-            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
-              <span className="font-medium text-stone-300">Jue</span>
-              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
-            </div>
-            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
-              <span className="font-medium text-stone-300">Vie</span>
-              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
-            </div>
-            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
-              <span className="font-medium text-stone-300">Sab</span>
-              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
-            </div>
-            <div className="flex items-center justify-between py-0.5 pt-1 text-stone-400">
-              <span className="font-medium text-stone-400">Dom</span>
-              <span className="text-[#D6001C] font-semibold tracking-wider">Cerrado</span>
+
+            {/* Plaque Footer: Official Google Maps Live Sync status */}
+            <div className="mt-5 pt-3.5 border-t border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] sm:text-xs text-stone-400 font-sans relative z-10 px-2">
+              <span className="flex items-center gap-2 font-medium">
+                <span className="w-2 h-2 rounded-full bg-[#25D366]" />
+                <span className="text-stone-300">Horarios sincronizados con Google Maps oficial</span>
+              </span>
+              <span className="text-stone-500 italic">
+                Lunes y Domingos Cerrado
+              </span>
             </div>
           </div>
         </div>

@@ -85,12 +85,12 @@ export const HoursAndLocation: React.FC = () => {
           </p>
         </div>
 
-        {/* Embedded Interactive Map */}
-        <div className="rounded overflow-hidden border border-[#222] bg-black aspect-[16/7] w-full">
+        {/* Embedded Interactive Map - Original colors without grey filter */}
+        <div className="rounded overflow-hidden border border-[#333] shadow-lg aspect-[16/7] w-full bg-[#1a1a1a]">
           <iframe
             title="Ubicación Studio Celia Figueredo"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.4447387799277!2d-58.40443882343905!3d-34.59471177295834!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca9a88df4d1d%3A0x7abd9aea078000e1!2sPeluqueria%20Celia%20Figueredo!5e0!3m2!1ses!2sar!4v1710000000000!5m2!1ses!2sar"
-            className="w-full h-full border-0 grayscale contrast-125 opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+            className="w-full h-full border-0"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />

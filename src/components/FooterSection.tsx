@@ -59,8 +59,6 @@ export const FooterSection: React.FC = () => {
 
             <a
               href={SALON_INFO.websiteFaqUrl}
-              target="_blank"
-              rel="noopener noreferrer"
               className="text-[#a0a0a0] hover:text-[#D4AF37] transition-colors flex items-center gap-1.5"
             >
               <ExternalLink className="w-3.5 h-3.5 text-[#D4AF37]" />
@@ -106,15 +104,15 @@ export const FooterSection: React.FC = () => {
               © {new Date().getFullYear()} CELIA FIGUEREDO ATELIER. TODOS LOS DERECHOS RESERVADOS.
             </p>
             <p className="text-xs text-stone-400">
-              creada por <strong className="text-[#D4AF37] font-semibold">soulgraficdesing</strong>{' '}
+              creada por <strong className="text-[#D4AF37] font-semibold">Soul Grafic Desing</strong>{' '}
               <a
-                href="https://wa.me/5491176423742?text=quiero%20una%20opagina%20web%20porpia"
+                href="https://wa.me/5491176423742?text=hola%20megustaria%20tener%20mi%20propio%20proyecto%20de.."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-stone-200 hover:text-[#D4AF37] underline underline-offset-2 transition-colors font-medium ml-1 cursor-pointer"
-                title="Contactar a soulgraficdesing"
+                title="Hablar de tu proyecto con Soul Grafic Desing"
               >
-                para tu pagina propia clik aki
+                click para hablar de tu proyecto.
               </a>
             </p>
           </div>

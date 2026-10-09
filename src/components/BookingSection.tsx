@@ -3,7 +3,8 @@ import { SALON_SERVICES, SALON_INFO } from '../data/services';
 import {
   saveAppointment,
   buildWhatsAppReservationUrl,
-  formatFriendlyDate
+  formatFriendlyDate,
+  isDayOfWeekClosed
 } from '../utils/appointmentStorage';
 import { Appointment, ServiceItem } from '../types';
 import {
@@ -108,8 +109,8 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
   // Build full Date object and check conditions
   const evaluatedDateInfo = useMemo(() => {
     const d = new Date(selectedYear, selectedMonth - 1, selectedDay);
-    const dayOfWeek = d.getDay(); // 0 is Sunday
-    const isSunday = dayOfWeek === 0;
+    const dayOfWeek = d.getDay(); // 0 is Sunday, 1 is Monday
+    const isClosed = isDayOfWeekClosed(dayOfWeek);
 
     // Check past date
     const today = new Date();
@@ -124,16 +125,24 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
     const isoDateStr = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
     const timeStr = `${selectedHour}:${selectedMinute}`;
 
-    let statusType: 'valid' | 'sunday' | 'past' = 'valid';
-    if (isSunday) statusType = 'sunday';
+    let statusType: 'valid' | 'closed' | 'past' = 'valid';
+    if (isClosed) statusType = 'closed';
     else if (isPast) statusType = 'past';
+
+    const closedMessage = dayOfWeek === 1
+      ? 'Los lunes el estudio permanece cerrado (según horario oficial de Google Maps). Por favor elegí de martes a sábado.'
+      : 'Los domingos el estudio permanece cerrado. Por favor elegí de martes a sábado.';
 
     return {
       dateObj: d,
+      dayOfWeek,
       dayName,
-      isSunday,
+      isClosed,
+      isSunday: dayOfWeek === 0,
+      isMonday: dayOfWeek === 1,
       isPast,
       statusType,
+      closedMessage,
       isoDateStr,
       timeStr,
       formattedText: `${dayName} ${selectedDay} de ${MONTH_NAMES[selectedMonth - 1]?.label} de ${selectedYear}`
@@ -159,8 +168,8 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
       errors.phone = 'Ingresá un número de teléfono válido (mínimo 8 dígitos).';
     }
 
-    if (evaluatedDateInfo.isSunday) {
-      errors.date = 'Los domingos el estudio permanece cerrado. Por favor elegí una fecha de lunes a sábado.';
+    if (evaluatedDateInfo.isClosed) {
+      errors.date = evaluatedDateInfo.closedMessage;
     } else if (evaluatedDateInfo.isPast) {
       errors.date = 'La fecha seleccionada ya ha pasado. Por favor elegí una fecha a partir de hoy.';
     }
@@ -518,11 +527,11 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
                         const dayOfWeekIndex = dateObj.getDay();
                         const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
                         const dayName = dayNames[dayOfWeekIndex];
-                        const isSunday = dayOfWeekIndex === 0;
+                        const isClosedDay = isDayOfWeekClosed(dayOfWeekIndex);
 
                         return (
                           <option key={d} value={d} className="bg-[#111] text-white">
-                            {dayName} {d} {isSunday ? '(Cerrado)' : ''}
+                            {dayName} {d} {isClosedDay ? '(Cerrado)' : ''}
                           </option>
                         );
                       })}
@@ -623,9 +632,9 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
                 <div className="flex-1 min-w-0">
                   <button
                     type="submit"
-                    disabled={isSubmitting || evaluatedDateInfo.isSunday || evaluatedDateInfo.isPast}
+                    disabled={isSubmitting || evaluatedDateInfo.isClosed || evaluatedDateInfo.isPast}
                     className={`w-full h-[58px] sm:h-[65px] px-2 sm:px-4 text-white font-semibold text-xs sm:text-sm uppercase tracking-wider rounded-sm transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg ${
-                      evaluatedDateInfo.isSunday || evaluatedDateInfo.isPast
+                      evaluatedDateInfo.isClosed || evaluatedDateInfo.isPast
                         ? 'bg-stone-800 text-stone-500 cursor-not-allowed border border-stone-700'
                         : 'bg-[#D6001C] hover:bg-[#b00017] shadow-[0_0_20px_rgba(214,0,28,0.4)] hover:shadow-[0_0_25px_rgba(214,0,28,0.6)] cursor-pointer'
                     }`}
@@ -639,7 +648,7 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
 
             {/* VISTA PREVIA: "y luego muestre lo seleccionado" */}
             <div className={`p-4 rounded-sm border transition-all ${
-              evaluatedDateInfo.isSunday
+              evaluatedDateInfo.isClosed
                 ? 'bg-[#180a0a] border-[#D6001C]'
                 : evaluatedDateInfo.isPast
                 ? 'bg-[#18110a] border-[#ff9900]/60'
@@ -669,10 +678,10 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
 
                 {/* State Badge */}
                 <div>
-                  {evaluatedDateInfo.isSunday ? (
+                  {evaluatedDateInfo.isClosed ? (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#D6001C]/20 border border-[#D6001C] text-[#ff7070] text-xs font-semibold">
                       <AlertTriangle className="w-3.5 h-3.5" />
-                      <span>DOMINGOS CERRADO</span>
+                      <span>{evaluatedDateInfo.isMonday ? 'LUNES CERRADO' : 'DOMINGOS CERRADO'}</span>
                     </span>
                   ) : evaluatedDateInfo.isPast ? (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-amber-900/30 border border-amber-600 text-amber-300 text-xs font-semibold">
@@ -688,14 +697,14 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
                 </div>
               </div>
 
-              {/* Warning message if Sunday or Past */}
-              {evaluatedDateInfo.isSunday && (
+              {/* Warning message if Closed or Past */}
+              {evaluatedDateInfo.isClosed && (
                 <p className="text-xs text-[#ff9999] mt-3 pt-2.5 border-t border-[#D6001C]/30 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <span>El estudio permanece cerrado los domingos. Por favor seleccioná un día de Lunes a Sábado.</span>
+                  <span>{evaluatedDateInfo.closedMessage}</span>
                 </p>
               )}
-              {evaluatedDateInfo.isPast && !evaluatedDateInfo.isSunday && (
+              {evaluatedDateInfo.isPast && !evaluatedDateInfo.isClosed && (
                 <p className="text-xs text-amber-300 mt-3 pt-2.5 border-t border-amber-500/30 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
                   <span>La fecha seleccionada ya pasó. Por favor seleccioná un día a partir de hoy.</span>
@@ -735,9 +744,9 @@ export const BookingSection: React.FC<BookingSectionProps> = ({
 
             <button
               type="submit"
-              disabled={isSubmitting || evaluatedDateInfo.isSunday || evaluatedDateInfo.isPast}
+              disabled={isSubmitting || evaluatedDateInfo.isClosed || evaluatedDateInfo.isPast}
               className={`w-full md:w-auto py-4 px-10 text-white font-medium text-xs tracking-[0.25em] uppercase transition-all duration-300 rounded-sm cursor-pointer flex items-center justify-center gap-3 ${
-                evaluatedDateInfo.isSunday || evaluatedDateInfo.isPast
+                evaluatedDateInfo.isClosed || evaluatedDateInfo.isPast
                   ? 'bg-stone-800 text-stone-500 cursor-not-allowed border border-stone-700'
                   : 'bg-[#D6001C] hover:bg-[#b50017] shadow-[0_0_25px_rgba(214,0,28,0.4)] hover:shadow-[0_0_35px_rgba(214,0,28,0.6)] hover:-translate-y-0.5'
               }`}

@@ -9,9 +9,11 @@ import {
   getStoredMasterUsers,
   saveMasterUsers,
   authenticateMasterUser,
+  getStoredWeeklySchedule,
+  saveWeeklySchedule,
   MasterUser
 } from '../utils/appointmentStorage';
-import { SALON_INFO } from '../data/services';
+import { SALON_INFO, DaySchedule } from '../data/services';
 import { StudioLogo } from './StudioLogo';
 import {
   Lock,
@@ -60,7 +62,7 @@ export const MasterPanel: React.FC<MasterPanelProps> = ({ onNavigateHome }) => {
   const [loginError, setLoginError] = useState('');
 
   // Tab navigation
-  const [activeTab, setActiveTab] = useState<'turnos' | 'claves'>('turnos');
+  const [activeTab, setActiveTab] = useState<'turnos' | 'claves' | 'horarios'>('turnos');
 
   // Dashboard appointments states
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -68,6 +70,9 @@ export const MasterPanel: React.FC<MasterPanelProps> = ({ onNavigateHome }) => {
   const [dateFilter, setDateFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'cancelled' | 'rescheduled'>('all');
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+
+  // Weekly schedule states (Google Maps sync)
+  const [weeklySchedule, setWeeklySchedule] = useState<DaySchedule[]>([]);
 
   // Credentials management states
   const [masterUsers, setMasterUsers] = useState<MasterUser[]>([]);
@@ -90,6 +95,8 @@ export const MasterPanel: React.FC<MasterPanelProps> = ({ onNavigateHome }) => {
     setAppointments(list);
     const users = getStoredMasterUsers();
     setMasterUsers(users);
+    const schedule = getStoredWeeklySchedule();
+    setWeeklySchedule(schedule);
   };
 
   useEffect(() => {
@@ -255,6 +262,24 @@ export const MasterPanel: React.FC<MasterPanelProps> = ({ onNavigateHome }) => {
     setNewPassword('');
     setNewNotes('');
     showNotice(`Nuevo usuario "${cleanU}" agregado exitosamente.`);
+  };
+
+  // Schedule management actions (Google Maps sync)
+  const handleUpdateDaySchedule = (dayKey: string, hoursText: string, isClosed: boolean) => {
+    const updated = weeklySchedule.map(d => {
+      if (d.dayKey === dayKey) {
+        return {
+          ...d,
+          hoursText: isClosed ? 'Cerrado' : hoursText.trim(),
+          isClosed
+        };
+      }
+      return d;
+    });
+
+    saveWeeklySchedule(updated);
+    setWeeklySchedule(updated);
+    showNotice(`Horario de ${dayKey.toUpperCase()} actualizado.`);
   };
 
   // Export CSV
@@ -458,7 +483,19 @@ export const MasterPanel: React.FC<MasterPanelProps> = ({ onNavigateHome }) => {
               }`}
             >
               <KeyRound className="w-3.5 h-3.5" />
-              <span>Claves de Acceso ({masterUsers.length})</span>
+              <span>Claves ({masterUsers.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('horarios')}
+              className={`py-1.5 px-3.5 text-xs uppercase tracking-wider rounded font-medium transition-all flex items-center gap-2 cursor-pointer ${
+                activeTab === 'horarios'
+                  ? 'bg-stone-200 text-black font-semibold shadow'
+                  : 'text-stone-400 hover:text-white'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span>Horarios Google Maps</span>
             </button>
           </div>
 
@@ -1030,6 +1067,107 @@ export const MasterPanel: React.FC<MasterPanelProps> = ({ onNavigateHome }) => {
                   <span>Crear y Guardar Usuario</span>
                 </button>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* ================= TAB 3: HORARIOS GOOGLE MAPS ================= */}
+        {activeTab === 'horarios' && (
+          <div className="space-y-6">
+            <div className="bg-[#0e0e0e] border border-[#222] rounded-sm p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#1f1f1f]">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-[#D4AF37]" />
+                    <h2 className="text-xl font-serif-luxury text-stone-100">
+                      Sincronización de Horarios (Google Maps)
+                    </h2>
+                  </div>
+                  <p className="text-xs text-stone-400 mt-1 max-w-2xl">
+                    Este panel permite configurar el estado de cada día tal como figura en tu ficha oficial de Google Maps. Si en Maps el lunes dice <strong>Cerrado</strong>, activás el botón correspondiente y se reflejará al instante en el recuadro principal de la web.
+                  </p>
+                </div>
+
+                <a
+                  href={SALON_INFO.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 py-2 px-3.5 bg-[#161616] hover:bg-[#222] border border-[#333] hover:border-[#D4AF37]/50 rounded text-xs text-stone-300 hover:text-[#D4AF37] transition-colors self-start sm:self-auto"
+                >
+                  <span>Abrir ficha en Google Maps</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* List of Days */}
+              <div className="mt-6 space-y-3">
+                {weeklySchedule.map((day) => {
+                  const isClosed = day.isClosed || day.hoursText.toLowerCase().includes('cerrado');
+                  return (
+                    <div
+                      key={day.dayKey}
+                      className="bg-[#141414] border border-[#222] rounded p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-serif-luxury text-base text-stone-200 w-24">
+                          {day.dayFull}
+                        </span>
+                        {isClosed ? (
+                          <span className="px-2.5 py-1 text-xs font-semibold uppercase bg-red-950/40 text-red-400 border border-red-800/40 rounded">
+                            Cerrado en Maps
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 text-xs font-semibold bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 rounded">
+                            Abierto ({day.hoursText})
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3">
+                        <input
+                          type="text"
+                          disabled={isClosed}
+                          defaultValue={day.hoursText}
+                          placeholder="Ej: de 11 a 18 hs"
+                          onBlur={(e) => {
+                            if (!isClosed) {
+                              handleUpdateDaySchedule(day.dayKey, e.target.value, false);
+                            }
+                          }}
+                          className={`bg-[#0a0a0a] border border-[#333] px-3 py-1.5 text-xs text-stone-200 rounded w-36 ${
+                            isClosed ? 'opacity-40 cursor-not-allowed' : 'focus:border-[#D4AF37]'
+                          }`}
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isClosed) {
+                              // Switch to open
+                              handleUpdateDaySchedule(day.dayKey, 'de 11 a 18 hs', false);
+                            } else {
+                              // Switch to closed
+                              handleUpdateDaySchedule(day.dayKey, 'Cerrado', true);
+                            }
+                          }}
+                          className={`py-1.5 px-3.5 text-xs font-semibold rounded cursor-pointer transition-colors ${
+                            isClosed
+                              ? 'bg-[#1b2f1e] hover:bg-[#25462a] text-emerald-300 border border-emerald-700/50'
+                              : 'bg-[#351216] hover:bg-[#48181e] text-red-300 border border-red-700/50'
+                          }`}
+                        >
+                          {isClosed ? 'Marcar como Abierto' : 'Marcar como Cerrado'}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-[#1c1c1c] text-xs text-stone-400 flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-[#D4AF37]" />
+                <span>Los cambios se guardan automáticamente y se muestran en tiempo real en la página principal.</span>
+              </div>
             </div>
           </div>
         )}

@@ -123,9 +123,10 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
           cellDate.setHours(0, 0, 0, 0);
 
           const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
-          const isSunday = cellDate.getDay() === 0;
+          const dayOfWeek = cellDate.getDay();
+          const isClosed = dayOfWeek === 0 || dayOfWeek === 1; // 0 = Domingo, 1 = Lunes cerrado según Google Maps
           const isPast = cellDate < today;
-          const isDisabled = isSunday || isPast;
+          const isDisabled = isClosed || isPast;
           const isSelected = selectedDate === dateStr;
           const isToday = cellDate.getTime() === today.getTime();
 
@@ -143,15 +144,15 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                   : 'text-stone-300 hover:bg-[#1f1a10] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 border border-transparent cursor-pointer'
               } ${isToday && !isSelected ? 'border border-[#D4AF37]/60 text-[#f1d592]' : ''}`}
               title={
-                isSunday
-                  ? 'Domingo: Estudio Cerrado'
+                isClosed
+                  ? `${dayOfWeek === 1 ? 'Lunes' : 'Domingo'}: Estudio Cerrado (Google Maps)`
                   : isPast
                   ? 'Fecha pasada'
                   : `Seleccionar ${dayNum} de ${monthNames[month]}`
               }
             >
               <span>{dayNum}</span>
-              {isSunday && (
+              {isClosed && (
                 <span className="text-[8px] leading-none text-[#992222] font-mono">cerrado</span>
               )}
             </button>
@@ -171,7 +172,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-stone-700" />
-          <span>Domingos cerrado</span>
+          <span>Lun y Dom cerrado</span>
         </div>
       </div>
     </div>

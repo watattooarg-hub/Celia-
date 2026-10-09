@@ -1,8 +1,9 @@
 import { Appointment, TimeSlot } from '../types';
-import { SALON_INFO } from '../data/services';
+import { SALON_INFO, DaySchedule, DEFAULT_WEEKLY_SCHEDULE } from '../data/services';
 
 const STORAGE_KEY = 'studio_celia_figueredo_appointments_v1';
 const MASTER_USERS_KEY = 'celia_atelier_master_users_v2';
+const SCHEDULE_STORAGE_KEY = 'celia_atelier_weekly_schedule_v2';
 
 export interface MasterUser {
   id: string;
@@ -27,6 +28,54 @@ const DEFAULT_MASTER_USERS: MasterUser[] = [
     notes: 'Usuario principal Atelier'
   }
 ];
+
+export function getStoredWeeklySchedule(): DaySchedule[] {
+  try {
+    const raw = localStorage.getItem(SCHEDULE_STORAGE_KEY);
+    if (!raw) {
+      // Clear outdated v1 cache if existing so user immediately sees Google Maps Monday Closed
+      localStorage.removeItem('celia_atelier_weekly_schedule_v1');
+      localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(DEFAULT_WEEKLY_SCHEDULE));
+      return DEFAULT_WEEKLY_SCHEDULE;
+    }
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(DEFAULT_WEEKLY_SCHEDULE));
+      return DEFAULT_WEEKLY_SCHEDULE;
+    }
+    return parsed;
+  } catch {
+    return DEFAULT_WEEKLY_SCHEDULE;
+  }
+}
+
+export function saveWeeklySchedule(schedule: DaySchedule[]): void {
+  try {
+    localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(schedule));
+  } catch (err) {
+    console.error('Error saving schedule:', err);
+  }
+}
+
+export function isDayOfWeekClosed(dayOfWeek: number, schedule?: DaySchedule[]): boolean {
+  const sched = schedule || getStoredWeeklySchedule();
+  const dayKeyMap: { [key: number]: string } = {
+    0: 'dom',
+    1: 'lun',
+    2: 'mar',
+    3: 'mie',
+    4: 'jue',
+    5: 'vie',
+    6: 'sab'
+  };
+  const key = dayKeyMap[dayOfWeek];
+  const item = sched.find(s => s.dayKey === key);
+  if (item) {
+    return item.isClosed || item.hoursText.toLowerCase().includes('cerrado');
+  }
+  // Default on Google Maps: Sunday (0) and Monday (1) are closed
+  return dayOfWeek === 0 || dayOfWeek === 1;
+}
 
 export function getStoredMasterUsers(): MasterUser[] {
   try {

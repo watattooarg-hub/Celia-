@@ -84,6 +84,26 @@ export const SALON_SERVICES: ServiceItem[] = [
   }
 ];
 
+export interface DaySchedule {
+  dayKey: string;
+  dayShort: string;
+  dayFull: string;
+  hoursText: string;
+  isClosed: boolean;
+  openHour?: number;
+  closeHour?: number;
+}
+
+export const DEFAULT_WEEKLY_SCHEDULE: DaySchedule[] = [
+  { dayKey: 'lun', dayShort: 'Lun', dayFull: 'Lunes', hoursText: 'Cerrado', isClosed: true },
+  { dayKey: 'mar', dayShort: 'Mar', dayFull: 'Martes', hoursText: 'de 11 a 18 hs', isClosed: false, openHour: 11, closeHour: 18 },
+  { dayKey: 'mie', dayShort: 'Mie', dayFull: 'Miércoles', hoursText: 'de 11 a 18 hs', isClosed: false, openHour: 11, closeHour: 18 },
+  { dayKey: 'jue', dayShort: 'Jue', dayFull: 'Jueves', hoursText: 'de 11 a 18 hs', isClosed: false, openHour: 11, closeHour: 18 },
+  { dayKey: 'vie', dayShort: 'Vie', dayFull: 'Viernes', hoursText: 'de 11 a 18 hs', isClosed: false, openHour: 11, closeHour: 18 },
+  { dayKey: 'sab', dayShort: 'Sab', dayFull: 'Sábado', hoursText: 'de 11 a 18 hs', isClosed: false, openHour: 11, closeHour: 18 },
+  { dayKey: 'dom', dayShort: 'Dom', dayFull: 'Domingo', hoursText: 'Cerrado', isClosed: true }
+];
+
 export const SALON_INFO = {
   name: 'Studio Celia Figueredo',
   tagline: 'ESTUDIO EXCLUSIVO • DESDE 2016',
@@ -100,11 +120,11 @@ export const SALON_INFO = {
   websiteEstilosUrl: 'https://celiafigueredo.com.ar/#estilos',
   websiteServicesUrl: 'https://celiafigueredo.com.ar/#servicios',
   websiteOpinionesUrl: 'https://celiafigueredo.com.ar/#opiniones',
-  websiteFaqUrl: 'https://celiafigueredo.com.ar/preguntas',
+  websiteFaqUrl: '/preguntas.html',
   mapsUrl: 'https://maps.app.goo.gl/3xnF5ZwrPzLt5A8Q6',
   instagramUrl: 'https://www.instagram.com/studioceliabelleza/',
-  openingHour: 9, // 9 AM
+  openingHour: 11, // 11 AM
   closingHour: 18, // 18 PM (6 PM)
-  closedDays: [0], // 0 is Sunday
+  closedDays: [0, 1], // 0 is Sunday, 1 is Monday (both closed on Google Maps)
   cancellationHoursLimit: 36 // 36 hours required notice
 };

@@ -377,11 +377,11 @@ export const ClientAppointmentsSection: React.FC<ClientAppointmentsSectionProps>
                                 const dayOfWeekIndex = dateObj.getDay();
                                 const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
                                 const dayName = dayNames[dayOfWeekIndex];
-                                const isSunday = dayOfWeekIndex === 0;
+                                const isClosedDay = dayOfWeekIndex === 0 || dayOfWeekIndex === 1;
 
                                 return (
                                   <option key={d} value={d}>
-                                    {dayName} {d} {isSunday ? '(Cerrado)' : ''}
+                                    {dayName} {d} {isClosedDay ? '(Cerrado)' : ''}
                                   </option>
                                 );
                               })}
