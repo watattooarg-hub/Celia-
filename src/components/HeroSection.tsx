@@ -79,6 +79,49 @@ export const HeroSection: React.FC = () => {
             <span>¿Ya tenés turno? Consultar o reprogramar mi reserva</span>
           </a>
         </div>
+
+        {/* Recuadro grande de Horarios de Atención solicitado */}
+        <div className="mt-7 w-full max-w-sm sm:max-w-md mx-auto bg-[#0a0a0a]/90 border border-[#D4AF37]/35 rounded-sm p-4 sm:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.7)] text-left">
+          <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-[#222]">
+            <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold">
+              Horarios de Atención
+            </span>
+            <span className="text-[10px] text-stone-400 tracking-wider">
+              Local 47
+            </span>
+          </div>
+
+          <div className="space-y-1.5 text-xs sm:text-sm font-sans tracking-wide">
+            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
+              <span className="font-medium text-stone-300">Lun</span>
+              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
+            </div>
+            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
+              <span className="font-medium text-stone-300">Mar</span>
+              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
+            </div>
+            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
+              <span className="font-medium text-stone-300">Mie</span>
+              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
+            </div>
+            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
+              <span className="font-medium text-stone-300">Jue</span>
+              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
+            </div>
+            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
+              <span className="font-medium text-stone-300">Vie</span>
+              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
+            </div>
+            <div className="flex items-center justify-between py-0.5 text-stone-200 border-b border-[#161616]">
+              <span className="font-medium text-stone-300">Sab</span>
+              <span className="text-stone-100 font-medium">de 11 a 18 hs</span>
+            </div>
+            <div className="flex items-center justify-between py-0.5 pt-1 text-stone-400">
+              <span className="font-medium text-stone-400">Dom</span>
+              <span className="text-[#D6001C] font-semibold tracking-wider">Cerrado</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
